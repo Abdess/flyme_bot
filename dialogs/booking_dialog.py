@@ -32,7 +32,11 @@ class BookingDialog(CancelAndHelpDialog):
                 self.destination_step,
                 self.origin_step,
                 self.travel_date_step,
-                # self.confirm_step,
+                self.travel_end_date_step,
+                self.budget_step,
+                self.n_adults_step,
+                self.n_children_step,
+                #self.confirm_step,
                 self.final_step,
             ],
         )
