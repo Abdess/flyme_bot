@@ -68,21 +68,19 @@ class LuisHelper:
                     else:
                         result.unsupported_airports.append(or_city_entities[0]["text"].capitalize())
 
-                str_date_entities = recognizer_result.entities.get("str_date", [])
-                end_date_entities = recognizer_result.entities.get("end_date", [])
-                datetime_entities = recognizer_result.entities.get("datetime", [])
+                str_date, end_date = None, None
 
-                result.str_date = None
-                result.end_date = None
+                date_entities = recognizer_result.entities.get("datetime", [])
+                if date_entities:
+                    timex = date_entities[0]["timex"]
+                    if date_entities[0]["type"] == "daterange":
+                        str_date, end_date = timex[0].replace("(", "").replace(")", "").split(",")
+                    elif date_entities[0]["type"] == "date":
+                        str_date = timex[0]
 
-                for entity in datetime_entities:
-                    if entity['type'] == "date" and str_date_entities:
-                        result.str_date = entity['timex'][0]
-                    elif entity['type'] == "date" and end_date_entities:
-                        result.end_date = entity['timex'][0]
-                    elif entity['type'] == "daterange":
-                        result.str_date = entity['timex'][0].split(',')[0].strip('(')
-                        result.end_date = entity['timex'][0].split(',')[1].strip(')')
+                result.str_date = str_date
+                result.end_date = end_date
+
 
                 budget_entities = recognizer_result.entities.get("$instance", {}).get(
                     "budget", []
