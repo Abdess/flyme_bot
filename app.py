@@ -85,12 +85,16 @@ async def messages(req: Request) -> Response:
         return json_response(data=response.body, status=response.status)
     return Response(status=HTTPStatus.OK)
 
-
-APP = web.Application(middlewares=[bot_telemetry_middleware, aiohttp_error_middleware])
-APP.router.add_post("/api/messages", messages)
+# python3.8 -m aiohttp.web -H 0.0.0.0 -P 8000 app:init_func
+def init_func(argv):
+    app = web.Application(middlewares=[bot_telemetry_middleware, aiohttp_error_middleware])
+    app.router.add_post("/api/messages", messages)
+    return app
 
 if __name__ == "__main__":
+    app = init_func(None)
     try:
-        web.run_app(APP, host="localhost", port=CONFIG.PORT)
+        # Run app in production
+        web.run_app(app, host='localhost', port=CONFIG.PORT)
     except Exception as error:
         raise error
