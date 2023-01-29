@@ -42,17 +42,17 @@ class BookingDialog(CancelAndHelpDialog):
                 self.or_city_step,
                 self.str_date_step,
                 self.end_date_step,
-                # self.budget_step,
+                self.budget_step,
                 # self.n_adults_step,
                 # self.n_children_step,
-                #self.confirm_step,
+                self.confirm_step,
                 self.final_step,
             ],
         )
         waterfall_dialog.telemetry_client = telemetry_client
 
         self.add_dialog(text_prompt)
-        # self.add_dialog(ConfirmPrompt(ConfirmPrompt.__name__))
+        self.add_dialog(ConfirmPrompt(ConfirmPrompt.__name__))
         self.add_dialog(
             DateResolverDialog(DateResolverDialog.__name__, self.telemetry_client)
         )
@@ -126,15 +126,36 @@ class BookingDialog(CancelAndHelpDialog):
         booking_details = step_context.options
 
         # Capture the results of the previous step
-        booking_details.or_city = step_context.result
+        booking_details.str_date = step_context.result
         if not booking_details.end_date or self.is_ambiguous(
             booking_details.end_date
         ):
             return await step_context.begin_dialog(
-                EndDateResolverDialog.__name__, booking_details.str_date
+                EndDateResolverDialog.__name__, booking_details.end_date
             )  # pylint: disable=line-too-long
 
         return await step_context.next(booking_details.end_date)
+
+    async def budget_step(
+        self, step_context: WaterfallStepContext
+        ) -> DialogTurnResult:
+        booking_details = step_context.options
+
+        # Capture the previous step's end_date
+        booking_details.end_date = step_context.result
+        
+        #Ask for budget if it's not already set
+        if booking_details.budget is None:
+            message_text = "What is your budget for this trip?"
+            prompt_message = MessageFactory.text(
+                message_text, message_text, InputHints.expecting_input
+            )
+            return await step_context.prompt(
+                TextPrompt.__name__, PromptOptions(prompt=prompt_message)
+            )
+        
+        return await step_context.next(booking_details.budget)
+
 
     async def confirm_step(
         self, step_context: WaterfallStepContext
@@ -160,14 +181,7 @@ class BookingDialog(CancelAndHelpDialog):
         """Complete the interaction and end the dialog."""
         if step_context.result:
             booking_details = step_context.options
-            booking_details.str_date = step_context.result
-            booking_details.end_date = step_context.result
 
             return await step_context.end_dialog(booking_details)
 
         return await step_context.end_dialog()
-
-    def is_ambiguous(self, timex: str) -> bool:
-        """Ensure time is correct."""
-        timex_property = Timex(timex)
-        return "definite" not in timex_property.types
