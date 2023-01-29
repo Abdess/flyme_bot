@@ -51,10 +51,8 @@ class TextToLuisPrompt(Prompt):
         entity = recognizer_result.entities.get("$instance", {}).get(self.dialog_id, [])
         if len(entity) > 0:
             entity = entity[0]["text"].capitalize()
-            print(f"found {self.dialog_id} :", entity)
         elif (self.dialog_id == "or_city" or self.dialog_id == "dst_city") and "geographyV2" in recognizer_result.entities:
             entity = recognizer_result.entities["geographyV2"][0]["text"].capitalize()
-            print(f"found {self.dialog_id} :", entity)
         else:
             prompt_result.succeeded = False
             return prompt_result
@@ -63,4 +61,3 @@ class TextToLuisPrompt(Prompt):
         prompt_result.value = entity
 
         return prompt_result
-
