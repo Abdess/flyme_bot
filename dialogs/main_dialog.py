@@ -21,13 +21,23 @@ from flight_booking_recognizer import FlightBookingRecognizer
 from helpers.luis_helper import LuisHelper, Intent
 from .booking_dialog import BookingDialog
 
+from config import DefaultConfig
+import logging
+from opencensus.ext.azure.log_exporter import AzureLogHandler
+from datetime import datetime
+from opencensus.ext.azure import metrics_exporter
+from opencensus.stats import aggregation as aggregation_module
+from opencensus.stats import measure as measure_module
+from opencensus.stats import stats as stats_module
+from opencensus.stats import view as view_module
+from opencensus.tags import tag_map as tag_map_module
 
 class MainDialog(ComponentDialog):
     def __init__(
         self,
         luis_recognizer: FlightBookingRecognizer,
         booking_dialog: BookingDialog,
-        telemetry_client: BotTelemetryClient = None,
+        telemetry_client: BotTelemetryClient = NullTelemetryClient(),
     ):
         super(MainDialog, self).__init__(MainDialog.__name__)
         self.telemetry_client = telemetry_client or NullTelemetryClient()
@@ -36,6 +46,44 @@ class MainDialog(ComponentDialog):
         text_prompt.telemetry_client = self.telemetry_client
 
         booking_dialog.telemetry_client = self.telemetry_client
+        self.logger = logging.getLogger(__name__)
+        configuration = DefaultConfig()
+        self.logger.addHandler(AzureLogHandler(connection_string=configuration.APPINSIGHTS_INSTRUMENTATION))
+
+        stats = stats_module.stats
+        view_manager = stats.view_manager
+        stats_recorder = stats.stats_recorder
+
+        self.accepted_measure = measure_module.MeasureInt("Accepted",
+                                           "number of accepted booking",
+                                           "Accepted")
+        accepted_view = view_module.View("Accepted Booking view",
+                               "number of Accepted booking",
+                               [],
+                               self.accepted_measure,
+                               aggregation_module.CountAggregation())
+        view_manager.register_view(accepted_view)
+
+        self.canceled_measure = measure_module.MeasureInt("Canceled",
+                                           "number of canceled booking",
+                                           "Canceled")
+        canceled_view = view_module.View("Canceled Booking view",
+                               "number of Canceled booking",
+                               [],
+                               self.canceled_measure,
+                               aggregation_module.CountAggregation())
+        view_manager.register_view(canceled_view)
+
+
+        self.accepted_mmap = stats_recorder.new_measurement_map()
+        self.tmap_accepted = tag_map_module.TagMap()
+
+        self.canceled_mmap = stats_recorder.new_measurement_map()
+        self.tmap_canceled = tag_map_module.TagMap()
+
+        configuration = DefaultConfig()
+        exporter = metrics_exporter.new_metrics_exporter(connection_string=configuration.APPINSIGHTS_INSTRUMENTATION)
+        view_manager.register_exporter(exporter)
 
         wf_dialog = WaterfallDialog(
             "WFDialog", [self.intro_step, self.act_step, self.final_step]
@@ -118,9 +166,23 @@ class MainDialog(ComponentDialog):
             # If the call to the booking service was successful tell the user.
             # time_property = Timex(result.str_date)
             # str_date_msg = time_property.to_natural_language(datetime.now())
-            msg_txt = f"I have you booked to {result.dst_city} from {result.or_city} on {result.str_date}"
+            self.accepted_mmap.measure_int_put(self.accepted_measure, 1)
+            self.accepted_mmap.record(self.tmap_accepted)
+
+            str_date = datetime.strptime(result.str_date, "%Y-%m-%d").date()
+            end_date = datetime.strptime(result.end_date, "%Y-%m-%d").date()
+            msg_txt = (
+                f"Please confirm, do you want to travel from {booking_details.or_city} to {booking_details.dst_city} on {str_date.strftime('%B %d, %Y')}"
+                f"and return on {end_date.strftime('%B %d, %Y')}, with a budget of {booking_details.budget}?"
+                )
+            self.logger.warning(f"Confirmed: {msg_txt}")
             message = MessageFactory.text(msg_txt, msg_txt, InputHints.ignoring_input)
             await step_context.context.send_activity(message)
+        else:
+            self.logger.error("The dialog had been canceled or not confirmed by user")
+            self.canceled_mmap.measure_int_put(self.canceled_measure, 1)
+            self.canceled_mmap.record(self.tmap_canceled)
+
 
         prompt_message = "What else can I do for you?"
         return await step_context.replace_dialog(self.id, prompt_message)
