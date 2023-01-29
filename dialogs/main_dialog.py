@@ -88,7 +88,7 @@ class MainDialog(ComponentDialog):
         )
 
         if intent == Intent.BOOK_FLIGHT.value and luis_result:
-            # Show a warning for Origin and Destination if we can't resolve them.
+            # Show a warning for or_city and dst_city if we can't resolve them.
             await MainDialog._show_warning_for_unsupported_cities(
                 step_context.context, luis_result
             )
@@ -116,9 +116,9 @@ class MainDialog(ComponentDialog):
             # Now we have all the booking details call the booking service.
 
             # If the call to the booking service was successful tell the user.
-            # time_property = Timex(result.travel_date)
-            # travel_date_msg = time_property.to_natural_language(datetime.now())
-            msg_txt = f"I have you booked to {result.destination} from {result.origin} on {result.travel_date}"
+            # time_property = Timex(result.str_date)
+            # str_date_msg = time_property.to_natural_language(datetime.now())
+            msg_txt = f"I have you booked to {result.dst_city} from {result.or_city} on {result.str_date}"
             message = MessageFactory.text(msg_txt, msg_txt, InputHints.ignoring_input)
             await step_context.context.send_activity(message)
 
