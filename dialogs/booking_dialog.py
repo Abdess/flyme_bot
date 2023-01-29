@@ -10,7 +10,8 @@ from botbuilder.dialogs.prompts import ConfirmPrompt, TextPrompt, PromptOptions
 from botbuilder.core import MessageFactory, BotTelemetryClient, NullTelemetryClient
 from botbuilder.schema import InputHints
 from .cancel_and_help_dialog import CancelAndHelpDialog
-from .date_resolver_dialog import DateResolverDialog, StrDateResolverDialog, EndDateResolverDialog
+from .date_resolver_dialog import StrDateResolverDialog, EndDateResolverDialog
+
 
 def is_ambiguous(timex: str) -> bool:
     """Ensure time is correct."""
@@ -53,9 +54,6 @@ class BookingDialog(CancelAndHelpDialog):
 
         self.add_dialog(text_prompt)
         self.add_dialog(ConfirmPrompt(ConfirmPrompt.__name__))
-        self.add_dialog(
-            DateResolverDialog(DateResolverDialog.__name__, self.telemetry_client)
-        )
         self.add_dialog(
             StrDateResolverDialog(StrDateResolverDialog.__name__, self.telemetry_client)
         )
