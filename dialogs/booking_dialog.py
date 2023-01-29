@@ -33,9 +33,9 @@ class BookingDialog(CancelAndHelpDialog):
                 self.origin_step,
                 self.travel_date_step,
                 self.travel_end_date_step,
-                self.budget_step,
-                self.n_adults_step,
-                self.n_children_step,
+                # self.budget_step,
+                # self.n_adults_step,
+                # self.n_children_step,
                 #self.confirm_step,
                 self.final_step,
             ],
@@ -97,7 +97,26 @@ class BookingDialog(CancelAndHelpDialog):
             booking_details.travel_date
         ):
             return await step_context.begin_dialog(
-                DateResolverDialog.__name__, booking_details.travel_date
+                DateResolverDialog(date_type="str_date").__name__, booking_details.travel_date
+            )  # pylint: disable=line-too-long
+
+        return await step_context.next(booking_details.travel_date)
+
+    async def travel_end_date_step(
+        self, step_context: WaterfallStepContext
+    ) -> DialogTurnResult:
+        """Prompt for travel date.
+        This will use the DATE_RESOLVER_DIALOG."""
+
+        booking_details = step_context.options
+
+        # Capture the results of the previous step
+        booking_details.origin = step_context.result
+        if not booking_details.travel_date or self.is_ambiguous(
+            booking_details.travel_date
+        ):
+            return await step_context.begin_dialog(
+                DateResolverDialog(date_type="end_date").__name__, booking_details.travel_date
             )  # pylint: disable=line-too-long
 
         return await step_context.next(booking_details.travel_date)
