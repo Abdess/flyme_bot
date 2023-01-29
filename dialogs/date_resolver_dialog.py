@@ -109,3 +109,13 @@ class DateResolverDialog(CancelAndHelpDialog):
             return "definite" in Timex(timex).types
 
         return False
+
+
+class StrDateResolverDialog(DateResolverDialog):
+    def __init__(self, dialog_id: str = None, telemetry_client: BotTelemetryClient = NullTelemetryClient()):
+        super().__init__(dialog_id, telemetry_client, date_type="str_date")
+
+
+class EndDateResolverDialog(DateResolverDialog):
+    def __init__(self, dialog_id: str = None, telemetry_client: BotTelemetryClient = NullTelemetryClient()):
+        super().__init__(dialog_id, telemetry_client, date_type="end_date")
