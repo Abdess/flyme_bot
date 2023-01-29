@@ -14,8 +14,8 @@ from botbuilder.core import (
     BotTelemetryClient,
     NullTelemetryClient,
 )
-from botbuilder.schema import InputHints
-
+from botbuilder.schema import InputHints, Attachment
+import json, re
 from booking_details import BookingDetails
 from flight_booking_recognizer import FlightBookingRecognizer
 from helpers.luis_helper import LuisHelper, Intent
@@ -169,11 +169,8 @@ class MainDialog(ComponentDialog):
             self.accepted_mmap.measure_int_put(self.accepted_measure, 1)
             self.accepted_mmap.record(self.tmap_accepted)
 
-            str_date = datetime.strptime(result.str_date, "%Y-%m-%d").date()
-            end_date = datetime.strptime(result.end_date, "%Y-%m-%d").date()
             msg_txt = (
-                f"Please confirm, do you want to travel from {booking_details.or_city} to {booking_details.dst_city} on {str_date.strftime('%B %d, %Y')}"
-                f"and return on {end_date.strftime('%B %d, %Y')}, with a budget of {booking_details.budget}?"
+                f"I understand that you're planning to travel to {booking_details.dst_city}, leaving from {booking_details.or_city} on {booking_details.str_date} and returning on {booking_details.end_date}. You'll be traveling with {booking_details.n_adults} adult(s) and {booking_details.n_children} child(ren), and your budget is set at {booking_details.budget}. Can you please confirm that this information is correct?"
                 )
             self.logger.warning(f"Confirmed: {msg_txt}")
             message = MessageFactory.text(msg_txt, msg_txt, InputHints.ignoring_input)
@@ -183,6 +180,9 @@ class MainDialog(ComponentDialog):
             self.canceled_mmap.measure_int_put(self.canceled_measure, 1)
             self.canceled_mmap.record(self.tmap_canceled)
 
+            card = self.create_adaptive_card_attachment(result)
+            response = MessageFactory.attachment(card)
+            await step_context.context.send_activity(response)
 
         prompt_message = "What else can I do for you?"
         return await step_context.replace_dialog(self.id, prompt_message)
@@ -205,3 +205,26 @@ class MainDialog(ComponentDialog):
                 message_text, message_text, InputHints.ignoring_input
             )
             await context.send_activity(message)
+
+    async def display_flight_card(self, step_context, result):
+        """Display the flight card with the booking details."""
+
+        # Load attachment from file.
+        path =  "bots/resources/bookedFlightCard.json"
+        with open(path) as card_file:
+            card = json.load(card_file)
+
+        # Replace placeholders with booking details
+        card["body"][0]["text"]["text"] = f"From: {result.or_city}"
+        card["body"][1]["text"]["text"] = f"To: {result.dst_city}"
+        card["body"][2]["text"]["text"] = f"Departure date: {result.str_date}"
+        card["body"][3]["text"]["text"] = f"Return date: {result.end_date}"
+        card["body"][4]["text"]["text"] = f"Number of adults: {result.n_adults}"
+        card["body"][5]["text"]["text"] = f"Number of children: {result.n_children}"
+        card["body"][6]["text"]["text"] = f"Budget: {result.budget}"
+
+        response = MessageFactory.attachment(
+            Attachment(content_type="application/vnd.microsoft.card.adaptive", content=card)
+        )
+        await step_context.context.send_activity(response)
+
