@@ -6,17 +6,14 @@ from datatypes_date_time.timex import Timex
 import datetime
 
 from botbuilder.dialogs import WaterfallDialog, WaterfallStepContext, DialogTurnResult
-from botbuilder.dialogs.prompts import ConfirmPrompt, TextPrompt, PromptOptions
+from botbuilder.dialogs.prompts import ConfirmPrompt, TextPrompt, PromptOptions, NumberPrompt
 from botbuilder.core import MessageFactory, BotTelemetryClient, NullTelemetryClient
 from botbuilder.schema import InputHints
 from .cancel_and_help_dialog import CancelAndHelpDialog
 from .date_resolver_dialog import StrDateResolverDialog, EndDateResolverDialog
+from .texttoluisprompt import TextToLuisPrompt
 
 
-def is_ambiguous(timex: str) -> bool:
-    """Ensure time is correct."""
-    timex_property = Timex(timex)
-    return "definite" not in timex_property.types
 
 class BookingDialog(CancelAndHelpDialog):
     """Flight booking implementation."""
@@ -30,8 +27,8 @@ class BookingDialog(CancelAndHelpDialog):
             dialog_id or BookingDialog.__name__, telemetry_client
         )
         self.telemetry_client = telemetry_client
-        text_prompt = TextPrompt(TextPrompt.__name__)
-        text_prompt.telemetry_client = telemetry_client
+        number_prompt = NumberPrompt(NumberPrompt.__name__)
+        number_prompt.telemetry_client = telemetry_client
 
         text_prompt = TextPrompt(TextPrompt.__name__)
         text_prompt.telemetry_client = telemetry_client
@@ -44,15 +41,19 @@ class BookingDialog(CancelAndHelpDialog):
                 self.str_date_step,
                 self.end_date_step,
                 self.budget_step,
-                # self.n_adults_step,
-                # self.n_children_step,
+                self.n_adults_step,
+                self.n_children_step,
                 self.confirm_step,
-                self.final_step,
+                self.final_step
             ],
         )
         waterfall_dialog.telemetry_client = telemetry_client
 
+        self.add_dialog(number_prompt)
         self.add_dialog(text_prompt)
+        self.add_dialog(TextToLuisPrompt("dst_city"))
+        self.add_dialog(TextToLuisPrompt("or_city"))
+        self.add_dialog(TextToLuisPrompt("budget"))
         self.add_dialog(ConfirmPrompt(ConfirmPrompt.__name__))
         self.add_dialog(
             StrDateResolverDialog(StrDateResolverDialog.__name__, self.telemetry_client)
@@ -72,7 +73,7 @@ class BookingDialog(CancelAndHelpDialog):
 
         if booking_details.dst_city is None:
             return await step_context.prompt(
-                TextPrompt.__name__,
+                "dst_city",
                 PromptOptions(
                     prompt=MessageFactory.text("To what city would you like to travel?")
                 ),
@@ -88,7 +89,7 @@ class BookingDialog(CancelAndHelpDialog):
         booking_details.dst_city = step_context.result
         if booking_details.or_city is None:
             return await step_context.prompt(
-                TextPrompt.__name__,
+                "or_city",
                 PromptOptions(
                     prompt=MessageFactory.text("From what city will you be travelling?")
                 ),
@@ -144,9 +145,9 @@ class BookingDialog(CancelAndHelpDialog):
         
         #Ask for budget if it's not already set
         if booking_details.budget is None:
-            message_text = "What is your budget for this trip?"
+            msg = "What is your budget for this trip?"
             prompt_message = MessageFactory.text(
-                message_text, message_text, InputHints.expecting_input
+                msg, msg, InputHints.expecting_input
             )
             return await step_context.prompt(
                 TextPrompt.__name__, PromptOptions(prompt=prompt_message)
@@ -154,6 +155,48 @@ class BookingDialog(CancelAndHelpDialog):
         
         return await step_context.next(booking_details.budget)
 
+    async def n_adults_step(self, step_context: WaterfallStepContext) -> DialogTurnResult:
+        """Prompt for the budget."""
+        booking_details = step_context.options
+
+        # Capture the response to the previous step's prompt
+        booking_details.budget = step_context.result
+        if booking_details.n_adults is None:
+            reprompt_msg = """Please include a numerical reference in your
+            sentence.
+            For example: "We are 2 adults traveling." or "We are two adults.".
+            """
+            return await step_context.prompt(
+                NumberPrompt.__name__,
+                PromptOptions(
+                    prompt=MessageFactory.text("For how many adult(s)?"),
+                    retry_prompt=MessageFactory.text(reprompt_msg)
+                ),
+            )  # pylint: disable=line-too-long,bad-continuation
+
+        return await step_context.next(booking_details.n_adults)      
+    
+    async def n_children_step(self, step_context: WaterfallStepContext) -> DialogTurnResult:
+        """Prompt for the budget."""
+        booking_details = step_context.options
+
+        # Capture the response to the previous step's prompt
+        booking_details.n_adults = step_context.result
+        
+        if booking_details.n_children is None:
+            reprompt_msg = """Please include a numerical reference in your
+            sentence.
+            For example: "I have 1 children." or "I have one children.".
+            """
+            return await step_context.prompt(
+                NumberPrompt.__name__,
+                PromptOptions(
+                    prompt=MessageFactory.text("And how many children(s)?"),
+                    retry_prompt=MessageFactory.text(reprompt_msg)
+                ),
+            )  # pylint: disable=line-too-long,bad-continuation
+
+        return await step_context.next(booking_details.n_children)    
 
     async def confirm_step(
         self, step_context: WaterfallStepContext
@@ -162,12 +205,9 @@ class BookingDialog(CancelAndHelpDialog):
         booking_details = step_context.options
 
         # Capture the results of the previous step
-        booking_details.budget = step_context.result
-        str_date = datetime.datetime.strptime(booking_details.str_date, "%Y-%m-%d").date()
-        end_date = datetime.datetime.strptime(booking_details.end_date, "%Y-%m-%d").date()
+        booking_details.n_children = step_context.result
         msg = (
-            f"Please confirm, do you want to travel from {booking_details.or_city} to {booking_details.dst_city} on {str_date.strftime('%B %d, %Y')} "
-            f"and return on {end_date.strftime('%B %d, %Y')}, with a budget of {booking_details.budget}?"
+            f"I understand that you're planning to travel to {booking_details.dst_city}, leaving from {booking_details.or_city} on {booking_details.str_date} and returning on {booking_details.end_date}. You'll be traveling with {booking_details.n_adults} adult(s) and {booking_details.n_children} child(ren), and your budget is set at {booking_details.budget}. Can you please confirm that this information is correct?"
         )
 
         # Offer a YES/NO prompt.
@@ -180,6 +220,38 @@ class BookingDialog(CancelAndHelpDialog):
         if step_context.result:
             booking_details = step_context.options
 
+        # Create data to track in App Insights
+        booking_details = step_context.options
+
+        properties = {}
+        properties["or_city"] = booking_details.or_city
+        properties["dst_city"] = booking_details.dst_city
+        properties["str_date"] = booking_details.str_date
+        properties["end_date"] = booking_details.end_date
+        properties["budget"] = booking_details.budget
+        
+        # If the BOT is successful
+        if step_context.result:
+            # Track YES data
+            self.telemetry_client.track_trace("YES answer", properties, "INFO")
             return await step_context.end_dialog(booking_details)
+        
+        # If the BOT is NOT successful
+        else:
+            # Send a "sorry" message to the user
+            sorry_msg = "I'm sorry I couldn't help you"
+            prompt_sorry_msg = MessageFactory.text(sorry_msg, sorry_msg, InputHints.ignoring_input)
+            await step_context.context.send_activity(prompt_sorry_msg)
+
+            # Track NO data
+            self.telemetry_client.track_trace("NO answer", properties, "ERROR")
 
         return await step_context.end_dialog()
+
+    
+    # ==== Ambiguous date ==== #
+    def is_ambiguous(self, timex: str) -> bool:
+        """Ensure time is correct."""
+        
+        timex_property = Timex(timex)
+        return "definite" not in timex_property.types
