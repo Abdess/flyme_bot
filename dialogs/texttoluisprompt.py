@@ -47,9 +47,10 @@ class TextToLuisPrompt(Prompt):
         usertext = turn_context.activity.text
         prompt_result = PromptRecognizerResult()
         recognizer_result = await self.luis_recognizer.recognize(turn_context)
-        
-        entity = recognizer_result.entities.get("$instance", {}).get(self.dialog_id, [])
-        if len(entity) > 0:
+        entities = recognizer_result.entities.get("$instance", {})
+        is_valid = ["geographyV2" in key for key in entities.keys()]
+        entity = entities.get(self.dialog_id, [])
+        if len(entity) > 0 and True in is_valid:
             entity = entity[0]["text"].capitalize()
         elif (self.dialog_id == "or_city" or self.dialog_id == "dst_city") and "geographyV2" in recognizer_result.entities:
             entity = recognizer_result.entities["geographyV2"][0]["text"].capitalize()

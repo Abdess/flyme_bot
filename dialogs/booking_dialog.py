@@ -10,7 +10,7 @@ from botbuilder.dialogs.prompts import ConfirmPrompt, TextPrompt, PromptOptions,
 from botbuilder.core import MessageFactory, BotTelemetryClient, NullTelemetryClient
 from botbuilder.schema import InputHints
 from .cancel_and_help_dialog import CancelAndHelpDialog
-from .date_resolver_dialog import StrDateResolverDialog, EndDateResolverDialog
+from .date_resolver_dialog import DateResolverDialog
 from .texttoluisprompt import TextToLuisPrompt
 
 
@@ -56,10 +56,10 @@ class BookingDialog(CancelAndHelpDialog):
         self.add_dialog(TextToLuisPrompt("budget"))
         self.add_dialog(ConfirmPrompt(ConfirmPrompt.__name__))
         self.add_dialog(
-            StrDateResolverDialog(StrDateResolverDialog.__name__, self.telemetry_client)
+            DateResolverDialog("str_date", self.telemetry_client)
         )
         self.add_dialog(
-            EndDateResolverDialog(EndDateResolverDialog.__name__, self.telemetry_client)
+            DateResolverDialog("end_date", self.telemetry_client)
         )
         self.add_dialog(waterfall_dialog)
 
@@ -111,7 +111,7 @@ class BookingDialog(CancelAndHelpDialog):
             booking_details.str_date
         ):
             return await step_context.begin_dialog(
-                StrDateResolverDialog.__name__, booking_details.str_date
+                "str_date", booking_details.str_date
             )  # pylint: disable=line-too-long
 
         return await step_context.next(booking_details.str_date)
@@ -130,7 +130,7 @@ class BookingDialog(CancelAndHelpDialog):
             booking_details.end_date
         ):
             return await step_context.begin_dialog(
-                EndDateResolverDialog.__name__, booking_details.end_date
+                "end_date", booking_details.end_date
             )  # pylint: disable=line-too-long
 
         return await step_context.next(booking_details.end_date)
@@ -145,15 +145,14 @@ class BookingDialog(CancelAndHelpDialog):
         
         #Ask for budget if it's not already set
         if booking_details.budget is None:
-            msg = "What is your budget for this trip?"
-            prompt_message = MessageFactory.text(
-                msg, msg, InputHints.expecting_input
-            )
+            retry_prompt = "Sorry, I couldn't process your budget input."
+            "Try in a different way. Eg. 'I have a budget of 500$.'."
             return await step_context.prompt(
-                TextPrompt.__name__, PromptOptions(prompt=prompt_message)
-            )
-        
-        return await step_context.next(booking_details.budget)
+                "budget",
+                PromptOptions(
+                    prompt=MessageFactory.text("What is your budget for this trip?")
+                ),
+            )  # pylint: disable=line-too-long,bad-continuation
 
     async def n_adults_step(self, step_context: WaterfallStepContext) -> DialogTurnResult:
         """Prompt for the budget."""

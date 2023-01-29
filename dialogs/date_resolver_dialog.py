@@ -3,6 +3,7 @@
 """Handle date/time resolution for booking dialog."""
 
 from datatypes_date_time.timex import Timex
+from typing import Final
 
 from botbuilder.core import MessageFactory, BotTelemetryClient, NullTelemetryClient
 from botbuilder.dialogs import WaterfallDialog, DialogTurnResult, WaterfallStepContext
@@ -12,12 +13,8 @@ from botbuilder.dialogs.prompts import (
     PromptOptions,
     DateTimeResolution,
 )
-from botbuilder.schema import InputHints
 from .cancel_and_help_dialog import CancelAndHelpDialog
 
-import logging
-from opencensus.ext.azure.log_exporter import AzureLogHandler
-from config import DefaultConfig
 
 class DateResolverDialog(CancelAndHelpDialog):
     """Resolve the date"""
@@ -26,16 +23,11 @@ class DateResolverDialog(CancelAndHelpDialog):
         self,
         dialog_id: str = None,
         telemetry_client: BotTelemetryClient = NullTelemetryClient(),
-        date_type: str = None
     ):
         super(DateResolverDialog, self).__init__(
             dialog_id or DateResolverDialog.__name__, telemetry_client
         )
         self.telemetry_client = telemetry_client
-        self.logger = logging.getLogger(__name__)
-        configuration = DefaultConfig()
-        self.logger.addHandler(AzureLogHandler(connection_string=configuration.APPINSIGHTS_INSTRUMENTATION))
-        self.date_type = date_type
 
         date_time_prompt = DateTimePrompt(
             DateTimePrompt.__name__, DateResolverDialog.datetime_prompt_validator
@@ -58,23 +50,12 @@ class DateResolverDialog(CancelAndHelpDialog):
         """Prompt for the date."""
         timex = step_context.options
 
-        if self.date_type == "str_date":
-            prompt_msg_text = "When would you like to leave?"
-            reprompt_msg_text = "I'm sorry, I couldn't figure out your departure date. Please enter your travel departure date " \
-                                 "including the month, day and year"
-        elif self.date_type == "end_date":
-            prompt_msg_text = "When would you like to return?"
-            reprompt_msg_text = "I'm sorry, I couldn't figure out your return date. Please enter your travel return date " \
-                                 "including the month, day and year"
-
-        prompt_msg = MessageFactory.text(
-            prompt_msg_text, prompt_msg_text, InputHints.expecting_input
+        prompt_msg = "On what date would you like to travel?"
+        reprompt_msg = (
+            "I'm sorry, for best results, please enter your travel "
+            "date including the month, day and year."
         )
 
-        reprompt_msg = MessageFactory.text(
-            reprompt_msg_text, reprompt_msg_text, InputHints.expecting_input
-        )
-        self.logger.error(f"Unrecognized {self.date_type} date: {step_context.options}")
         if timex is None:
             # We were not given any date at all so prompt the user.
             return await step_context.prompt(
@@ -109,13 +90,3 @@ class DateResolverDialog(CancelAndHelpDialog):
             return "definite" in Timex(timex).types
 
         return False
-
-
-class StrDateResolverDialog(DateResolverDialog):
-    def __init__(self, dialog_id: str = None, telemetry_client: BotTelemetryClient = NullTelemetryClient()):
-        super().__init__(dialog_id, telemetry_client, date_type="str_date")
-
-
-class EndDateResolverDialog(DateResolverDialog):
-    def __init__(self, dialog_id: str = None, telemetry_client: BotTelemetryClient = NullTelemetryClient()):
-        super().__init__(dialog_id, telemetry_client, date_type="end_date")
