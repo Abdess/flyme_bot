@@ -19,3 +19,6 @@ class DefaultConfig:
     APPINSIGHTS_INSTRUMENTATION_KEY = os.environ.get(
         "AppInsightsInstrumentationKey", ""
     )
+    APPINSIGHTS_INSTRUMENTATION = os.environ.get(
+        "AppInsightsInstrumentation", ""
+    )
