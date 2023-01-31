@@ -222,36 +222,25 @@ class BookingDialog(CancelAndHelpDialog):
 
     async def final_step(self, step_context: WaterfallStepContext) -> DialogTurnResult:
         """Complete the interaction and end the dialog."""
-        if step_context.result:
-            booking_details = step_context.options
-
-        # Create data to track in App Insights
         booking_details = step_context.options
+        properties = {
+            "or_city": booking_details.or_city,
+            "dst_city": booking_details.dst_city,
+            "str_date": booking_details.str_date,
+            "end_date": booking_details.end_date,
+            "budget": booking_details.budget,
+            "n_adults": booking_details.n_adults,
+            "n_children": booking_details.n_children
+        }
 
-        properties = {}
-        properties["or_city"] = booking_details.or_city
-        properties["dst_city"] = booking_details.dst_city
-        properties["str_date"] = booking_details.str_date
-        properties["end_date"] = booking_details.end_date
-        properties["budget"] = booking_details.budget
-        properties["n_adults"] = booking_details.n_adults
-        properties["n_children"] = booking_details.n_children
-
-        # If the BOT is successful
         if step_context.result:
-            # Track YES data
-            self.telemetry_client.track_trace("YES answer", properties, "INFO")
+            self.telemetry_client.track_trace("Booking confirmed", properties, "INFO")
             return await step_context.end_dialog(booking_details)
 
-        # If the BOT is NOT successful
-        else:
-            # Send a "sorry" message to the user
-            sorry_msg = "I'm sorry I couldn't help you"
-            prompt_sorry_msg = MessageFactory.text(sorry_msg, sorry_msg, InputHints.ignoring_input)
-            await step_context.context.send_activity(prompt_sorry_msg)
-
-            # Track NO data
-            self.telemetry_client.track_trace("NO answer", properties, "ERROR")
+        self.telemetry_client.track_trace("Booking declined", properties, "ERROR")
+        await step_context.context.send_activity(
+            MessageFactory.text("I invite you to make a new booking.")
+        )
 
         return await step_context.end_dialog()
 
