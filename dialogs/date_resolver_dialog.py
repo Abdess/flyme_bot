@@ -2,8 +2,7 @@
 # Licensed under the MIT License.
 """Handle date/time resolution for booking dialog."""
 
-from datatypes_date_time.timex import Timex
-from typing import Final
+import datetime
 
 from botbuilder.core import MessageFactory, BotTelemetryClient, NullTelemetryClient
 from botbuilder.dialogs import WaterfallDialog, DialogTurnResult, WaterfallStepContext
@@ -13,6 +12,8 @@ from botbuilder.dialogs.prompts import (
     PromptOptions,
     DateTimeResolution,
 )
+from datatypes_date_time.timex import Timex
+
 from .cancel_and_help_dialog import CancelAndHelpDialog
 
 
@@ -20,15 +21,15 @@ class DateResolverDialog(CancelAndHelpDialog):
     """Resolve the date"""
 
     def __init__(
-        self,
-        dialog_id: str = None,
-        telemetry_client: BotTelemetryClient = NullTelemetryClient(),
+            self,
+            dialog_id: str = None,
+            telemetry_client: BotTelemetryClient = NullTelemetryClient(),
     ):
         super(DateResolverDialog, self).__init__(
             dialog_id or DateResolverDialog.__name__, telemetry_client
         )
         self.telemetry_client = telemetry_client
-
+        self.dialog_id = dialog_id
         date_time_prompt = DateTimePrompt(
             DateTimePrompt.__name__, DateResolverDialog.datetime_prompt_validator
         )
@@ -44,34 +45,42 @@ class DateResolverDialog(CancelAndHelpDialog):
 
         self.initial_dialog_id = WaterfallDialog.__name__ + "2"
 
-    async def initial_step(
-        self, step_context: WaterfallStepContext
-    ) -> DialogTurnResult:
-        """Prompt for the date."""
+    async def initial_step(self, step_context: WaterfallStepContext) -> DialogTurnResult:
         timex = step_context.options
-
-        prompt_msg = "On what date would you like to travel?"
-        reprompt_msg = (
-            "I'm sorry, for best results, please enter your travel "
-            "date including the month, day and year."
-        )
+        prompts = {
+            "str_date": "On what date would you like to travel?",
+            "end_date": "On what date would you like to come back?"
+        }
+        prompt = prompts.get(self.dialog_id,
+                             "I'm sorry, please enter a valid travel date including the month, day, and year.")
+        invalid_date_msg = "Sorry, that date is invalid. Please try again."
+        invalid_future_date_msg = "Sorry, time travel isn't possible yet. Please enter a valid future date."
+        invalid_return_date_msg = "Returning before leaving? Please enter a valid return date."
 
         if timex is None:
-            # We were not given any date at all so prompt the user.
             return await step_context.prompt(
                 DateTimePrompt.__name__,
-                PromptOptions(  # pylint: disable=bad-continuation
-                    prompt=MessageFactory.text(prompt_msg),
-                    retry_prompt=MessageFactory.text(reprompt_msg),
-                ),
+                PromptOptions(prompt=MessageFactory.text(prompt), retry_prompt=MessageFactory.text(prompt)),
             )
 
-        # We have a Date we just need to check it is unambiguous.
-        if "definite" in Timex(timex).types:
-            # This is essentially a "reprompt" of the data we were given up front.
-            return await step_context.prompt(
-                DateTimePrompt.__name__, PromptOptions(prompt=reprompt_msg)
-            )
+        try:
+            date = datetime.datetime.strptime(timex.split("T")[0], '%Y-%m-%d').date()
+        except ValueError:
+            return await step_context.prompt(DateTimePrompt.__name__,
+                                             PromptOptions(prompt=MessageFactory.text(invalid_date_msg)))
+
+        now = datetime.datetime.now().date()
+
+        if self.dialog_id == "str_date" and date < now:
+            return await step_context.prompt(DateTimePrompt.__name__,
+                                             PromptOptions(prompt=MessageFactory.text(invalid_future_date_msg)))
+
+        if self.dialog_id == "end_date" and date < step_context.options:
+            return await step_context.prompt(DateTimePrompt.__name__,
+                                             PromptOptions(prompt=MessageFactory.text(invalid_return_date_msg)))
+
+        if "definite" not in Timex(timex).types:
+            return await step_context.prompt(DateTimePrompt.__name__, PromptOptions(prompt=MessageFactory.text(prompt)))
 
         return await step_context.next(DateTimeResolution(timex=timex))
 
