@@ -12,26 +12,25 @@ from http import HTTPStatus
 
 from aiohttp import web
 from aiohttp.web import Request, Response, json_response
+from botbuilder.applicationinsights import ApplicationInsightsTelemetryClient
 from botbuilder.core import (
     BotFrameworkAdapterSettings,
     ConversationState,
     MemoryStorage,
-    UserState,
     TelemetryLoggerMiddleware,
+    UserState,
 )
 from botbuilder.core.integration import aiohttp_error_middleware
-from botbuilder.schema import Activity
-from botbuilder.applicationinsights import ApplicationInsightsTelemetryClient
 from botbuilder.integration.applicationinsights.aiohttp import (
     AiohttpTelemetryProcessor,
     bot_telemetry_middleware,
 )
-
-from config import DefaultConfig
-from dialogs import MainDialog, BookingDialog
-from bots import DialogAndWelcomeBot
+from botbuilder.schema import Activity
 
 from adapter_with_error_handler import AdapterWithErrorHandler
+from bots import DialogAndWelcomeBot
+from config import DefaultConfig
+from dialogs import MainDialog, BookingDialog
 from flight_booking_recognizer import FlightBookingRecognizer
 
 CONFIG = DefaultConfig()
@@ -59,12 +58,14 @@ TELEMETRY_CLIENT = ApplicationInsightsTelemetryClient(
 )
 
 # Code for enabling activity and personal information logging.
-# TELEMETRY_LOGGER_MIDDLEWARE = TelemetryLoggerMiddleware(telemetry_client=TELEMETRY_CLIENT, log_personal_information=True)
-# ADAPTER.use(TELEMETRY_LOGGER_MIDDLEWARE)
+TELEMETRY_LOGGER_MIDDLEWARE = TelemetryLoggerMiddleware(
+    telemetry_client=TELEMETRY_CLIENT, log_personal_information=False
+)
+ADAPTER.use(TELEMETRY_LOGGER_MIDDLEWARE)
 
 # Create dialogs and Bot
 RECOGNIZER = FlightBookingRecognizer(CONFIG)
-BOOKING_DIALOG = BookingDialog()
+BOOKING_DIALOG = BookingDialog(telemetry_client=TELEMETRY_CLIENT)
 DIALOG = MainDialog(RECOGNIZER, BOOKING_DIALOG, telemetry_client=TELEMETRY_CLIENT)
 BOT = DialogAndWelcomeBot(CONVERSATION_STATE, USER_STATE, DIALOG, TELEMETRY_CLIENT)
 
@@ -85,11 +86,13 @@ async def messages(req: Request) -> Response:
         return json_response(data=response.body, status=response.status)
     return Response(status=HTTPStatus.OK)
 
+
 # python3.8 -m aiohttp.web -H 0.0.0.0 -P 8000 app:init_func
 def init_func(argv):
     app = web.Application(middlewares=[bot_telemetry_middleware, aiohttp_error_middleware])
     app.router.add_post("/api/messages", messages)
     return app
+
 
 if __name__ == "__main__":
     app = init_func(None)
