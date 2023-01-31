@@ -1,13 +1,15 @@
 # Setting up LUIS via CLI:
 
-This README contains information on how to create and deploy a LUIS application. When the bot is ready to be deployed to production, we recommend creating a LUIS Endpoint Resource for usage with your LUIS App.
+This README contains information on how to create and deploy a LUIS application. When the bot is ready to be deployed to
+production, we recommend creating a LUIS Endpoint Resource for usage with your LUIS App.
 
 > _For instructions on how to create a LUIS Application via the LUIS portal, see these Quickstart steps:_
 > 1. _[Quickstart: Create a new app in the LUIS portal][Quickstart-create]_
 > 2. _[Quickstart: Deploy an app in the LUIS portal][Quickstart-deploy]_
 
-  [Quickstart-create]: https://docs.microsoft.com/azure/cognitive-services/luis/get-started-portal-build-app
-  [Quickstart-deploy]:https://docs.microsoft.com/azure/cognitive-services/luis/get-started-portal-deploy-app
+[Quickstart-create]: https://docs.microsoft.com/azure/cognitive-services/luis/get-started-portal-build-app
+
+[Quickstart-deploy]:https://docs.microsoft.com/azure/cognitive-services/luis/get-started-portal-deploy-app
 
 ## Table of Contents:
 
@@ -22,6 +24,7 @@ ___
 #### Install Azure CLI >=2.0.61:
 
 Visit the following page to find the correct installer for your OS:
+
 - https://docs.microsoft.com/en-us/cli/azure/install-azure-cli?view=azure-cli-latest
 
 #### Install LUIS CLI >=2.4.0:
@@ -34,12 +37,15 @@ npm i -g luis-apis@^2.4.0
 
 #### LUIS portal account:
 
-You should already have a LUIS account with either https://luis.ai, https://eu.luis.ai, or https://au.luis.ai. To determine where to create a LUIS account, consider where you will deploy your LUIS applications, and then place them in [the corresponding region][LUIS-Authoring-Regions].
+You should already have a LUIS account with either https://luis.ai, https://eu.luis.ai, or https://au.luis.ai. To
+determine where to create a LUIS account, consider where you will deploy your LUIS applications, and then place them
+in [the corresponding region][LUIS-Authoring-Regions].
 
 After you've created your account, you need your [Authoring Key][LUIS-AKey] and a LUIS application ID.
 
-  [LUIS-Authoring-Regions]: https://docs.microsoft.com/azure/cognitive-services/luis/luis-reference-regions#luis-authoring-regions]
-  [LUIS-AKey]: https://docs.microsoft.com/azure/cognitive-services/luis/luis-concept-keys#authoring-key
+[LUIS-Authoring-Regions]: https://docs.microsoft.com/azure/cognitive-services/luis/luis-reference-regions#luis-authoring-regions]
+
+[LUIS-AKey]: https://docs.microsoft.com/azure/cognitive-services/luis/luis-concept-keys#authoring-key
 
 ___
 
@@ -85,12 +91,15 @@ luis train version --region "LuisAppAuthoringRegion" --authoringKey "LuisAuthori
 luis publish version --region "LuisAppAuthoringRegion" --authoringKey "LuisAuthoringKey" --appId "LuisAppId" --versionId "LuisAppversion" --publishRegion "LuisAppPublishRegion"
 ```
 
-> `--region` corresponds to the region you _author_ your application in. The regions available for this are "westus", "westeurope" and "australiaeast". <br/>
-> These regions correspond to the three available portals, https://luis.ai, https://eu.luis.ai, or https://au.luis.ai. <br/>
-> `--publishRegion` corresponds to the region of the endpoint you're publishing to, (e.g. "westus", "southeastasia", "westeurope", "brazilsouth"). <br/>
+> `--region` corresponds to the region you _author_ your application in. The regions available for this are "westus", "
+> westeurope" and "australiaeast". <br/>
+> These regions correspond to the three available portals, https://luis.ai, https://eu.luis.ai,
+> or https://au.luis.ai. <br/>
+> `--publishRegion` corresponds to the region of the endpoint you're publishing to, (e.g. "westus", "southeastasia", "
+> westeurope", "brazilsouth"). <br/>
 > See the [reference docs][Endpoint-API] for a list of available publish/endpoint regions.
 
-  [Endpoint-API]: https://westus.dev.cognitive.microsoft.com/docs/services/5819c76f40a6350ce09de1ac/operations/5819c77140a63516d81aee78
+[Endpoint-API]: https://westus.dev.cognitive.microsoft.com/docs/services/5819c76f40a6350ce09de1ac/operations/5819c77140a63516d81aee78
 
 Outputs the following:
 
@@ -108,9 +117,11 @@ Outputs the following:
 }
 ```
 
-To see how to create an LUIS Cognitive Service Resource in Azure, please see [the next README][README-LUIS]. This Resource should be used when you want to move your bot to production. The instructions will show you how to create and pair the resource with a LUIS Application.
+To see how to create an LUIS Cognitive Service Resource in Azure, please see [the next README][README-LUIS]. This
+Resource should be used when you want to move your bot to production. The instructions will show you how to create and
+pair the resource with a LUIS Application.
 
-  [README-LUIS]: ./README-LUIS.md
+[README-LUIS]: ./README-LUIS.md
 
 ___
 
@@ -119,12 +130,12 @@ ___
 ### 1. Create a new LUIS Cognitive Services resource on Azure via Azure CLI
 
 > _Note:_ <br/>
-> _If you don't have a Resource Group in your Azure subscription, you can create one through the Azure portal or through using:_
+> _If you don't have a Resource Group in your Azure subscription, you can create one through the Azure portal or through
+using:_
 > ```bash
 > az group create --subscription "AzureSubscriptionGuid" --location "westus" --name "ResourceGroupName"
 > ```
 > _To see a list of valid locations, use `az account list-locations`_
-
 
 ```bash
 # Use Azure CLI to create the LUIS Key resource on Azure
@@ -152,8 +163,6 @@ The command will output a response similar to the JSON below:
   "type": "Microsoft.CognitiveServices/accounts"
 }
 ```
-
-
 
 Take the output from the previous command and create a JSON file in the following format:
 

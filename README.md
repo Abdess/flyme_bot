@@ -17,35 +17,47 @@ This sample **requires** prerequisites in order to run.
 ### Overview
 
 This bot uses [LUIS](https://www.luis.ai), an AI based cognitive service, to implement language understanding
-and [Application Insights](https://docs.microsoft.com/azure/azure-monitor/app/cloudservices), an extensible Application Performance Management (APM) service for web developers on multiple platforms.
+and [Application Insights](https://docs.microsoft.com/azure/azure-monitor/app/cloudservices), an extensible Application
+Performance Management (APM) service for web developers on multiple platforms.
 
 ### Create a LUIS Application to enable language understanding
 
-LUIS language model setup, training, and application configuration steps can be found [here](https://docs.microsoft.com/azure/bot-service/bot-builder-howto-v4-luis?view=azure-bot-service-4.0&tabs=cs).
+LUIS language model setup, training, and application configuration steps can be
+found [here](https://docs.microsoft.com/azure/bot-service/bot-builder-howto-v4-luis?view=azure-bot-service-4.0&tabs=cs).
 
 If you wish to create a LUIS application via the CLI, these steps can be found in the [README-LUIS.md](README-LUIS.md).
 
 ### Add Application Insights service to enable the bot monitoring
 
-Application Insights resource creation steps can be found [here](https://docs.microsoft.com/azure/azure-monitor/app/create-new-resource).
+Application Insights resource creation steps can be
+found [here](https://docs.microsoft.com/azure/azure-monitor/app/create-new-resource).
 
-You must include the instrumentation key in the `config.py` file, as well is in the designated field in your Azure Bot resource.
+You must include the instrumentation key in the `config.py` file, as well is in the designated field in your Azure Bot
+resource.
 
 ### Add Activity and Personal Information logging for Application Insights
-To log activity and personal information, extra code is needed in `app.py` after the creation of the telemetry client. This code is *already present* in the sample, but must be unconmmented in order to function. It is important to note that due to privacy concerns, in a real-world application you **must** obtain user consent prior to logging this information.
+
+To log activity and personal information, extra code is needed in `app.py` after the creation of the telemetry client.
+This code is *already present* in the sample, but must be unconmmented in order to function. It is important to note
+that due to privacy concerns, in a real-world application you **must** obtain user consent prior to logging this
+information.
 
 The required code is as follows:
+
 ```python
-TELEMETRY_LOGGER_MIDDLEWARE = TelemetryLoggerMiddleware(telemetry_client=TELEMETRY_CLIENT, log_personal_information=True)
+TELEMETRY_LOGGER_MIDDLEWARE = TelemetryLoggerMiddleware(telemetry_client=TELEMETRY_CLIENT,
+                                                        log_personal_information=True)
 ADAPTER.use(TELEMETRY_LOGGER_MIDDLEWARE)
 ```
 
 ## To try this sample
 
 - Clone the repository
+
 ```bash
 git clone https://github.com/Microsoft/botbuilder-samples.git
 ```
+
 - In a terminal, navigate to `botbuilder-samples\samples\python\21.corebot-app-insights` folder
 - Activate your desired virtual environment
 - In the terminal, type `pip install -r requirements.txt`
@@ -53,7 +65,8 @@ git clone https://github.com/Microsoft/botbuilder-samples.git
 
 ## Testing the bot using Bot Framework Emulator
 
-[Bot Framework Emulator](https://github.com/microsoft/botframework-emulator) is a desktop application that allows bot developers to test and debug their bots on localhost or running remotely through a tunnel.
+[Bot Framework Emulator](https://github.com/microsoft/botframework-emulator) is a desktop application that allows bot
+developers to test and debug their bots on localhost or running remotely through a tunnel.
 
 - Install the latest Bot Framework Emulator from [here](https://github.com/Microsoft/BotFramework-Emulator/releases)
 
@@ -65,7 +78,8 @@ git clone https://github.com/Microsoft/botbuilder-samples.git
 
 ## Deploy the bot to Azure
 
-To learn more about deploying a bot to Azure, see [Deploy your bot to Azure](https://aka.ms/azuredeployment) for a complete list of deployment instructions.
+To learn more about deploying a bot to Azure, see [Deploy your bot to Azure](https://aka.ms/azuredeployment) for a
+complete list of deployment instructions.
 
 ## Further reading
 
