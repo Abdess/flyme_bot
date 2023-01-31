@@ -15,14 +15,14 @@ from config import DefaultConfig
 
 class FlightBookingRecognizer(Recognizer):
     def __init__(
-        self, configuration: DefaultConfig, telemetry_client: BotTelemetryClient = None
+            self, configuration: DefaultConfig, telemetry_client: BotTelemetryClient = None
     ):
         self._recognizer = None
 
         luis_is_configured = (
-            configuration.LUIS_APP_ID
-            and configuration.LUIS_API_KEY
-            and configuration.LUIS_API_HOST_NAME
+                configuration.LUIS_APP_ID
+                and configuration.LUIS_API_KEY
+                and configuration.LUIS_API_HOST_NAME
         )
         if luis_is_configured:
             # Set the recognizer options depending on which endpoint version you want to use e.g v2 or v3.

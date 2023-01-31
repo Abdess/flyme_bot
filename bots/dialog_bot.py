@@ -11,18 +11,17 @@ from botbuilder.core import (
     NullTelemetryClient,
 )
 from botbuilder.dialogs import Dialog, DialogExtensions
-from helpers.dialog_helper import DialogHelper
 
 
 class DialogBot(ActivityHandler):
     """Main activity handler for the bot."""
 
     def __init__(
-        self,
-        conversation_state: ConversationState,
-        user_state: UserState,
-        dialog: Dialog,
-        telemetry_client: BotTelemetryClient,
+            self,
+            conversation_state: ConversationState,
+            user_state: UserState,
+            dialog: Dialog,
+            telemetry_client: BotTelemetryClient,
     ):
         if conversation_state is None:
             raise Exception(

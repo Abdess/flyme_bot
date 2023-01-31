@@ -3,6 +3,7 @@
 """Helper to create reply object."""
 
 from datetime import datetime
+
 from botbuilder.schema import (
     Activity,
     ActivityTypes,

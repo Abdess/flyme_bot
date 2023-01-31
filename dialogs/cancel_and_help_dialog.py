@@ -16,15 +16,15 @@ class CancelAndHelpDialog(ComponentDialog):
     """Implementation of handling cancel and help."""
 
     def __init__(
-        self,
-        dialog_id: str,
-        telemetry_client: BotTelemetryClient = NullTelemetryClient(),
+            self,
+            dialog_id: str,
+            telemetry_client: BotTelemetryClient = NullTelemetryClient(),
     ):
         super(CancelAndHelpDialog, self).__init__(dialog_id)
         self.telemetry_client = telemetry_client
 
     async def on_begin_dialog(
-        self, inner_dc: DialogContext, options: object
+            self, inner_dc: DialogContext, options: object
     ) -> DialogTurnResult:
         result = await self.interrupt(inner_dc)
         if result is not None:

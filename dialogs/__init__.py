@@ -7,4 +7,4 @@ from .date_resolver_dialog import DateResolverDialog
 from .main_dialog import MainDialog
 from .texttoluisprompt import TextToLuisPrompt
 
-__all__ = ["BookingDialog", "CancelAndHelpDialog","DateResolverDialog", "MainDialog", "TextToLuisPrompt"]
+__all__ = ["BookingDialog", "CancelAndHelpDialog", "DateResolverDialog", "MainDialog", "TextToLuisPrompt"]

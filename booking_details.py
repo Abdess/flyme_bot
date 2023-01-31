@@ -4,15 +4,15 @@
 
 class BookingDetails:
     def __init__(
-        self,
-        dst_city: str = None,
-        or_city: str = None,
-        str_date: str = None,
-        end_date: str = None,
-        budget: str = None,
-        n_adults: int = None,
-        n_children: int = None,
-        unsupported_airports=None,
+            self,
+            dst_city: str = None,
+            or_city: str = None,
+            str_date: str = None,
+            end_date: str = None,
+            budget: str = None,
+            n_adults: int = None,
+            n_children: int = None,
+            unsupported_airports=None,
     ):
         if unsupported_airports is None:
             unsupported_airports = []

@@ -15,9 +15,9 @@ from botbuilder.schema import ActivityTypes, Activity
 
 class AdapterWithErrorHandler(BotFrameworkAdapter):
     def __init__(
-        self,
-        settings: BotFrameworkAdapterSettings,
-        conversation_state: ConversationState,
+            self,
+            settings: BotFrameworkAdapterSettings,
+            conversation_state: ConversationState,
     ):
         super().__init__(settings)
         self._conversation_state = conversation_state
