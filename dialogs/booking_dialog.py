@@ -5,7 +5,6 @@
 from botbuilder.core import MessageFactory, BotTelemetryClient, NullTelemetryClient
 from botbuilder.dialogs import WaterfallDialog, WaterfallStepContext, DialogTurnResult
 from botbuilder.dialogs.prompts import ConfirmPrompt, TextPrompt, PromptOptions, NumberPrompt
-from botbuilder.schema import InputHints
 from datatypes_date_time.timex import Timex
 
 from .cancel_and_help_dialog import CancelAndHelpDialog
@@ -52,7 +51,7 @@ class BookingDialog(CancelAndHelpDialog):
         self.add_dialog(TextToLuisPrompt("dst_city"))
         self.add_dialog(TextToLuisPrompt("or_city"))
         self.add_dialog(TextToLuisPrompt("budget"))
-        self.add_dialog(ConfirmPrompt(ConfirmPrompt.__name__))
+        self.add_dialog(ConfirmPrompt(ConfirmPrompt.__name__, default_locale="en-us"))
         self.add_dialog(
             DateResolverDialog("str_date", self.telemetry_client)
         )
