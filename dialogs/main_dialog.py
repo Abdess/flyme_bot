@@ -1,6 +1,12 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 
+from botbuilder.core import (
+    MessageFactory,
+    TurnContext,
+    BotTelemetryClient,
+    NullTelemetryClient,
+)
 from botbuilder.dialogs import (
     ComponentDialog,
     WaterfallDialog,
@@ -8,36 +14,21 @@ from botbuilder.dialogs import (
     DialogTurnResult,
 )
 from botbuilder.dialogs.prompts import TextPrompt, PromptOptions
-from botbuilder.core import (
-    MessageFactory,
-    TurnContext,
-    BotTelemetryClient,
-    NullTelemetryClient,
-)
-from botbuilder.schema import InputHints, Attachment
-import json, re
+from botbuilder.schema import InputHints
+
 from booking_details import BookingDetails
 from flight_booking_recognizer import FlightBookingRecognizer
 from helpers.luis_helper import LuisHelper, Intent
 from .booking_dialog import BookingDialog
+from .flight_itinerary_card import FlightItineraryCard
 
-from config import DefaultConfig
-import logging
-from opencensus.ext.azure.log_exporter import AzureLogHandler
-from datetime import datetime
-from opencensus.ext.azure import metrics_exporter
-from opencensus.stats import aggregation as aggregation_module
-from opencensus.stats import measure as measure_module
-from opencensus.stats import stats as stats_module
-from opencensus.stats import view as view_module
-from opencensus.tags import tag_map as tag_map_module
 
 class MainDialog(ComponentDialog):
     def __init__(
-        self,
-        luis_recognizer: FlightBookingRecognizer,
-        booking_dialog: BookingDialog,
-        telemetry_client: BotTelemetryClient = NullTelemetryClient(),
+            self,
+            luis_recognizer: FlightBookingRecognizer,
+            booking_dialog: BookingDialog,
+            telemetry_client: BotTelemetryClient = None,
     ):
         super(MainDialog, self).__init__(MainDialog.__name__)
         self.telemetry_client = telemetry_client or NullTelemetryClient()
@@ -46,47 +37,9 @@ class MainDialog(ComponentDialog):
         text_prompt.telemetry_client = self.telemetry_client
 
         booking_dialog.telemetry_client = self.telemetry_client
-        self.logger = logging.getLogger(__name__)
-        configuration = DefaultConfig()
-        self.logger.addHandler(AzureLogHandler(connection_string=configuration.APPINSIGHTS_INSTRUMENTATION))
-
-        stats = stats_module.stats
-        view_manager = stats.view_manager
-        stats_recorder = stats.stats_recorder
-
-        self.accepted_measure = measure_module.MeasureInt("Accepted",
-                                           "number of accepted booking",
-                                           "Accepted")
-        accepted_view = view_module.View("Accepted Booking view",
-                               "number of Accepted booking",
-                               [],
-                               self.accepted_measure,
-                               aggregation_module.CountAggregation())
-        view_manager.register_view(accepted_view)
-
-        self.canceled_measure = measure_module.MeasureInt("Canceled",
-                                           "number of canceled booking",
-                                           "Canceled")
-        canceled_view = view_module.View("Canceled Booking view",
-                               "number of Canceled booking",
-                               [],
-                               self.canceled_measure,
-                               aggregation_module.CountAggregation())
-        view_manager.register_view(canceled_view)
-
-
-        self.accepted_mmap = stats_recorder.new_measurement_map()
-        self.tmap_accepted = tag_map_module.TagMap()
-
-        self.canceled_mmap = stats_recorder.new_measurement_map()
-        self.tmap_canceled = tag_map_module.TagMap()
-
-        configuration = DefaultConfig()
-        exporter = metrics_exporter.new_metrics_exporter(connection_string=configuration.APPINSIGHTS_INSTRUMENTATION)
-        view_manager.register_exporter(exporter)
 
         wf_dialog = WaterfallDialog(
-            "WFDialog", [self.intro_step, self.act_step, self.final_step]
+            "WFDialog", [self.intro_step, self.act_step, self.final_step]  # self.intro_step
         )
         wf_dialog.telemetry_client = self.telemetry_client
 
@@ -144,14 +97,26 @@ class MainDialog(ComponentDialog):
             # Run the BookingDialog giving it whatever details we have from the LUIS call.
             return await step_context.begin_dialog(self._booking_dialog_id, luis_result)
 
+        elif intent == Intent.CANCEL.value:
+            cancel_text = "Okay, bye! Have a great day."
+            cancel_message = MessageFactory.text(
+                cancel_text, cancel_text, InputHints.ignoring_input
+            )
+            await step_context.context.send_activity(cancel_message)
+
+        elif intent == Intent.NONE_INTENT.value:
+            none_text = "Sorry, I only book flights. Can you please rephrase your request?"
+            none_message = MessageFactory.text(
+                none_text, none_text, InputHints.ignoring_input
+            )
+            await step_context.context.send_activity(none_message)
+
         else:
-            didnt_understand_text = (
-                "Sorry, I didn't get that. Please try asking in a different way"
+            ambiguous_text = "I'm sorry, I didn't understand that. Can you please try asking in a different way?"
+            ambiguous_message = MessageFactory.text(
+                ambiguous_text, ambiguous_text, InputHints.ignoring_input
             )
-            didnt_understand_message = MessageFactory.text(
-                didnt_understand_text, didnt_understand_text, InputHints.ignoring_input
-            )
-            await step_context.context.send_activity(didnt_understand_message)
+            await step_context.context.send_activity(ambiguous_message)
 
         return await step_context.next(None)
 
@@ -161,35 +126,26 @@ class MainDialog(ComponentDialog):
         if step_context.result is not None:
             result = step_context.result
 
-            # Now we have all the booking details call the booking service.
-
-            # If the call to the booking service was successful tell the user.
-            # time_property = Timex(result.str_date)
-            # str_date_msg = time_property.to_natural_language(datetime.now())
-            self.accepted_mmap.measure_int_put(self.accepted_measure, 1)
-            self.accepted_mmap.record(self.tmap_accepted)
-
-            msg_txt = (
-                f"I understand that you're planning to travel to {booking_details.dst_city}, leaving from {booking_details.or_city} on {booking_details.str_date} and returning on {booking_details.end_date}. You'll be traveling with {booking_details.n_adults} adult(s) and {booking_details.n_children} child(ren), and your budget is set at {booking_details.budget}. Can you please confirm that this information is correct?"
-                )
-            self.logger.warning(f"Confirmed: {msg_txt}")
-            message = MessageFactory.text(msg_txt, msg_txt, InputHints.ignoring_input)
-            await step_context.context.send_activity(message)
-        else:
-            self.logger.error("The dialog had been canceled or not confirmed by user")
-            self.canceled_mmap.measure_int_put(self.canceled_measure, 1)
-            self.canceled_mmap.record(self.tmap_canceled)
-
-            card = self.create_adaptive_card_attachment(result)
+            flight_card = FlightItineraryCard(result)
+            card = flight_card.create_attachment()
             response = MessageFactory.attachment(card)
             await step_context.context.send_activity(response)
 
-        prompt_message = "What else can I do for you?"
+            msg_txt = (
+                f"Your flight is all set! It includes {result.n_adults} adult(s) and {result.n_children} child(ren)"
+                f" from {result.or_city} to {result.dst_city}, departing on {result.str_date}"
+                f" and returning on {result.end_date}. "
+                "I've sent the booking details to your email. Have a great trip!"
+            )
+            message = MessageFactory.text(msg_txt, msg_txt, InputHints.ignoring_input)
+            await step_context.context.send_activity(message)
+
+        prompt_message = "Is there anything else I can help you with?"
         return await step_context.replace_dialog(self.id, prompt_message)
 
     @staticmethod
     async def _show_warning_for_unsupported_cities(
-        context: TurnContext, luis_result: BookingDetails
+            context: TurnContext, luis_result: BookingDetails
     ) -> None:
         """
         Shows a warning if the requested From or To cities are recognized as entities but they are not in the Airport entity list.
@@ -205,26 +161,3 @@ class MainDialog(ComponentDialog):
                 message_text, message_text, InputHints.ignoring_input
             )
             await context.send_activity(message)
-
-    async def display_flight_card(self, step_context, result):
-        """Display the flight card with the booking details."""
-
-        # Load attachment from file.
-        path =  "bots/resources/bookedFlightCard.json"
-        with open(path) as card_file:
-            card = json.load(card_file)
-
-        # Replace placeholders with booking details
-        card["body"][0]["text"]["text"] = f"From: {result.or_city}"
-        card["body"][1]["text"]["text"] = f"To: {result.dst_city}"
-        card["body"][2]["text"]["text"] = f"Departure date: {result.str_date}"
-        card["body"][3]["text"]["text"] = f"Return date: {result.end_date}"
-        card["body"][4]["text"]["text"] = f"Number of adults: {result.n_adults}"
-        card["body"][5]["text"]["text"] = f"Number of children: {result.n_children}"
-        card["body"][6]["text"]["text"] = f"Budget: {result.budget}"
-
-        response = MessageFactory.attachment(
-            Attachment(content_type="application/vnd.microsoft.card.adaptive", content=card)
-        )
-        await step_context.context.send_activity(response)
-
