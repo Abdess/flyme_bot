@@ -1,47 +1,30 @@
 {
   "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
   "type": "AdaptiveCard",
-  "version": "1.0",
+  "version": "1.3",
   "body": [
     {
       "type": "Image",
       "url": "https://user.oc-static.com/upload/2019/10/24/15719199766568_Capture%20d%E2%80%99e%CC%81cran%202019-10-24%20a%CC%80%2014.14.41.png",
-      "size": "stretch"
+      "size": "Stretch"
     },
     {
       "type": "TextBlock",
-      "spacing": "medium",
-      "size": "default",
-      "weight": "bolder",
+      "spacing": "Medium",
+      "size": "Default",
+      "weight": "Bolder",
       "text": "Welcome to Fly Me!",
       "wrap": true,
       "maxLines": 0
     },
     {
       "type": "TextBlock",
-      "size": "default",
-      "isSubtle": "true",
-      "text": "Book your ticket with our kind Chat Bot.",
+      "spacing": "Medium",
+      "size": "Default",
+      "isSubtle": true,
+      "text": "I'm here to help you book your flight! Just ask me like:\n\n'I live in Le Havre and I want to go to Paris today and return 2 days later for 400 euros, 2 adults and 2 children.'\n\nReady to book your next flight? Let's get started!",
       "wrap": true,
       "maxLines": 0
     }
-  ],
-  "actions": [
-    {
-      "type": "Action.OpenUrl",
-      "title": "Learn more",
-      "url": "https://www.flyme.com/features"
-    },
-    {
-      "type": "Action.OpenUrl",
-      "title": "Contact Us",
-      "url": "https://www.flyme.com/contact"
-    },
-    {
-      "type": "Action.OpenUrl",
-      "title": "Book a flight",
-      "url": "https://www.flyme.com/book"
-    }
   ]
 }
-

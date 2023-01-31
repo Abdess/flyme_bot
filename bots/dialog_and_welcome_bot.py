@@ -3,16 +3,17 @@
 """Main dialog to welcome users."""
 import json
 import os.path
-
 from typing import List
-from botbuilder.dialogs import Dialog
+
 from botbuilder.core import (
     TurnContext,
     ConversationState,
     UserState,
     BotTelemetryClient,
 )
+from botbuilder.dialogs import Dialog
 from botbuilder.schema import Activity, Attachment, ChannelAccount
+
 from helpers.activity_helper import create_activity_reply
 from .dialog_bot import DialogBot
 
@@ -21,11 +22,11 @@ class DialogAndWelcomeBot(DialogBot):
     """Main dialog to welcome users."""
 
     def __init__(
-        self,
-        conversation_state: ConversationState,
-        user_state: UserState,
-        dialog: Dialog,
-        telemetry_client: BotTelemetryClient,
+            self,
+            conversation_state: ConversationState,
+            user_state: UserState,
+            dialog: Dialog,
+            telemetry_client: BotTelemetryClient,
     ):
         super(DialogAndWelcomeBot, self).__init__(
             conversation_state, user_state, dialog, telemetry_client
@@ -33,7 +34,7 @@ class DialogAndWelcomeBot(DialogBot):
         self.telemetry_client = telemetry_client
 
     async def on_members_added_activity(
-        self, members_added: List[ChannelAccount], turn_context: TurnContext
+            self, members_added: List[ChannelAccount], turn_context: TurnContext
     ):
         for member in members_added:
             # Greet anyone that was not the target (recipient) of this message.
@@ -55,7 +56,7 @@ class DialogAndWelcomeBot(DialogBot):
         """Create an adaptive card."""
         relative_path = os.path.abspath(os.path.dirname(__file__))
         path = os.path.join(relative_path, "resources/welcomeCard.json")
-        with open(path) as card_file:
+        with open(path, encoding="utf-8") as card_file:
             card = json.load(card_file)
 
         return Attachment(
