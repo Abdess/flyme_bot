@@ -223,13 +223,13 @@ class BookingDialog(CancelAndHelpDialog):
         """Complete the interaction and end the dialog."""
         booking_details = step_context.options
         properties = {
-            "or_city": booking_details.or_city,
-            "dst_city": booking_details.dst_city,
-            "str_date": booking_details.str_date,
-            "end_date": booking_details.end_date,
-            "budget": booking_details.budget,
-            "n_adults": booking_details.n_adults,
-            "n_children": booking_details.n_children
+            "or_city": str(booking_details.or_city),
+            "dst_city": str(booking_details.dst_city),
+            "str_date": str(booking_details.str_date),
+            "end_date": str(booking_details.end_date),
+            "budget": str(booking_details.budget),
+            "n_adults": str(booking_details.n_adults),
+            "n_children": str(booking_details.n_children)
         }
 
         if step_context.result:

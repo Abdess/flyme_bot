@@ -10,8 +10,8 @@ class BookingDetails:
             str_date: str = None,
             end_date: str = None,
             budget: str = None,
-            n_adults: int = None,
-            n_children: int = None,
+            n_adults: str = None,
+            n_children: str = None,
             unsupported_airports=None,
     ):
         if unsupported_airports is None:
