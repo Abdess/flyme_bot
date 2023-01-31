@@ -1,0 +1,165 @@
+{
+  "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+  "version": "1.0",
+  "type": "AdaptiveCard",
+  "body": [
+    {
+      "type": "TextBlock",
+      "text": "Passengers",
+      "weight": "Bolder",
+      "isSubtle": false
+    },
+    {
+      "type": "TextBlock",
+      "text": "${n_adults} Adult(s)",
+      "separator": true,
+      "weight": "Default"
+    },
+    {
+      "type": "TextBlock",
+      "text": "${n_children} Child(ren)",
+      "spacing": "None"
+    },
+    {
+      "type": "TextBlock",
+      "text": "${str_date}",
+      "weight": "Bolder",
+      "spacing": "Medium"
+    },
+    {
+      "type": "ColumnSet",
+      "separator": true,
+      "columns": [
+        {
+          "type": "Column",
+          "width": 1,
+          "items": [
+            {
+              "type": "TextBlock",
+              "size": "ExtraLarge",
+              "color": "Accent",
+              "text": "${or_city}",
+              "spacing": "None"
+            }
+          ]
+        },
+        {
+          "type": "Column",
+          "width": "auto",
+          "items": [
+            {
+              "type": "TextBlock",
+              "text": " "
+            },
+            {
+              "type": "Image",
+              "url": "https://adaptivecards.io/content/airplane.png",
+              "size": "Small",
+              "spacing": "None"
+            }
+          ]
+        },
+        {
+          "type": "Column",
+          "width": 1,
+          "items": [
+            {
+              "type": "TextBlock",
+              "horizontalAlignment": "Right",
+              "size": "ExtraLarge",
+              "color": "Accent",
+              "text": "${dst_city}",
+              "spacing": "None"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "TextBlock",
+      "text": "${end_date}",
+      "weight": "Bolder",
+      "spacing": "Medium"
+    },
+    {
+      "type": "ColumnSet",
+      "separator": true,
+      "columns": [
+        {
+          "type": "Column",
+          "width": 1,
+          "items": [
+            {
+              "type": "TextBlock",
+              "size": "ExtraLarge",
+              "color": "Accent",
+              "text": "${dst_city}",
+              "spacing": "None"
+            }
+          ]
+        },
+        {
+          "type": "Column",
+          "width": "auto",
+          "items": [
+            {
+              "type": "TextBlock",
+              "text": " "
+            },
+            {
+              "type": "Image",
+              "url": "https://adaptivecards.io/content/airplane.png",
+              "size": "Small",
+              "spacing": "None"
+            }
+          ]
+        },
+        {
+          "type": "Column",
+          "width": 1,
+          "items": [
+            {
+              "type": "TextBlock",
+              "horizontalAlignment": "Right",
+              "size": "ExtraLarge",
+              "color": "Accent",
+              "text": "${or_city}",
+              "spacing": "None"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "ColumnSet",
+      "spacing": "Medium",
+      "columns": [
+        {
+          "type": "Column",
+          "width": 1,
+          "items": [
+            {
+              "type": "TextBlock",
+              "text": "Total",
+              "size": "Medium",
+              "isSubtle": true
+            }
+          ]
+        },
+        {
+          "type": "Column",
+          "width": 1,
+          "items": [
+            {
+              "type": "TextBlock",
+              "horizontalAlignment": "Right",
+              "text": "${budget}",
+              "size": "Medium",
+              "weight": "Bolder"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
