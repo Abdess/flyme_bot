@@ -195,7 +195,7 @@ class BookingDialog(CancelAndHelpDialog):
             return await step_context.prompt(
                 NumberPrompt.__name__,
                 PromptOptions(
-                    prompt=MessageFactory.text("And how many children(s)?"),
+                    prompt=MessageFactory.text("And how many child(ren)?"),
                     retry_prompt=MessageFactory.text(reprompt_msg)
                 ),
             )  # pylint: disable=line-too-long,bad-continuation
