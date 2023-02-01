@@ -12,6 +12,7 @@ on:
 
 jobs:
   build:
+    environment: Production
     runs-on: ubuntu-latest
 
     steps:
@@ -31,6 +32,18 @@ jobs:
         run: pip install -r requirements.txt
 
       # Optional: Add step to run tests here (PyTest, Django test suites, etc.)
+      - name: Test with pytest
+        env:
+          MicrosoftAppId: ${{secrets.MICROSOFTAPPID}}
+          MicrosoftAppPassword: ${{secrets.MICROSOFTAPPPASSWORD}}
+          LuisAppId: ${{secrets.LUISAPPID}}
+          LuisAPIKey: ${{secrets.LUISAPIKEY}}
+          LuisAPIHostName: ${{secrets.LUISAPIHOSTNAME}}
+          AppInsightsInstrumentationKey: ${{secrets.APPINSIGHTSINSTRUMENTATIONKEY}}
+          AppInsightsInstrumentation: ${{secrets.APPINSIGHTSINSTRUMENTATION}}
+        
+        run: |
+          pytest
 
       - name: Upload artifact for deployment jobs
         uses: actions/upload-artifact@v2
