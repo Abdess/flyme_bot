@@ -15,7 +15,7 @@ from config import DefaultConfig
 
 class FlightBookingRecognizer(Recognizer):
     def __init__(
-            self, configuration: DefaultConfig, telemetry_client: BotTelemetryClient = None
+            self, configuration: DefaultConfig, telemetry_client: BotTelemetryClient = NullTelemetryClient()
     ):
         self._recognizer = None
 

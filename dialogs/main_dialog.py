@@ -28,7 +28,7 @@ class MainDialog(ComponentDialog):
             self,
             luis_recognizer: FlightBookingRecognizer,
             booking_dialog: BookingDialog,
-            telemetry_client: BotTelemetryClient = None,
+            telemetry_client: BotTelemetryClient = NullTelemetryClient(),
     ):
         super(MainDialog, self).__init__(MainDialog.__name__)
         self.telemetry_client = telemetry_client or NullTelemetryClient()
@@ -39,7 +39,7 @@ class MainDialog(ComponentDialog):
         booking_dialog.telemetry_client = self.telemetry_client
 
         wf_dialog = WaterfallDialog(
-            "WFDialog", [self.intro_step, self.act_step, self.final_step]  # self.intro_step
+            "WFDialog", [self.intro_step, self.act_step, self.final_step]
         )
         wf_dialog.telemetry_client = self.telemetry_client
 
@@ -63,6 +63,7 @@ class MainDialog(ComponentDialog):
             )
 
             return await step_context.next(None)
+
         message_text = (
             str(step_context.options)
             if step_context.options
@@ -88,12 +89,19 @@ class MainDialog(ComponentDialog):
             self._luis_recognizer, step_context.context
         )
 
+        bot_log = {
+            "bot": "Hello! What can I help you with today?",
+            "user": step_context.result,
+            "step": "act_step",
+            "intent": intent
+        }
+
         if intent == Intent.BOOK_FLIGHT.value and luis_result:
             # Show a warning for or_city and dst_city if we can't resolve them.
             await MainDialog._show_warning_for_unsupported_cities(
                 step_context.context, luis_result
             )
-
+            self.telemetry_client.track_trace("Info", bot_log, "INFO")
             # Run the BookingDialog giving it whatever details we have from the LUIS call.
             return await step_context.begin_dialog(self._booking_dialog_id, luis_result)
 
@@ -102,6 +110,7 @@ class MainDialog(ComponentDialog):
             cancel_message = MessageFactory.text(
                 cancel_text, cancel_text, InputHints.ignoring_input
             )
+            self.telemetry_client.track_trace("Cancel", bot_log, "ERROR")
             await step_context.context.send_activity(cancel_message)
 
         elif intent == Intent.NONE_INTENT.value:
@@ -109,6 +118,7 @@ class MainDialog(ComponentDialog):
             none_message = MessageFactory.text(
                 none_text, none_text, InputHints.ignoring_input
             )
+            self.telemetry_client.track_trace("None", bot_log, "WARNING")
             await step_context.context.send_activity(none_message)
 
         else:

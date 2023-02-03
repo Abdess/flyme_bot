@@ -46,7 +46,7 @@ class FlightBookingTest(aiounittest.AsyncTestCase):
         step4 = await step3.test("Because I'm doing an unit test, I've to tell you something futur proof... so "
                                  "let's say I want to travel during the 2nd February 2023!",
                                  "On what date would you like to come back?")
-        step5 = await step4.test("I want to come back 14 days later", "What is your budget for this trip?")
+        step5 = await step4.test("I want to come back on 2023-02-15", "What is your budget for this trip?")
         step6 = await step5.test("I've one bitcoin, some euros and 2 bananas for scale", "For how many adult(s)?")
         step7 = await step6.test("Don't know, my family say I'm still a child... so zero?", "And how many child(ren)?")
         step8 = await step7.send("Dude! I feel like I'm 1 thousand children!!")

@@ -59,7 +59,7 @@ TELEMETRY_CLIENT = ApplicationInsightsTelemetryClient(
 
 # Code for enabling activity and personal information logging.
 TELEMETRY_LOGGER_MIDDLEWARE = TelemetryLoggerMiddleware(
-    telemetry_client=TELEMETRY_CLIENT, log_personal_information=False
+    telemetry_client=TELEMETRY_CLIENT, log_personal_information=True
 )
 ADAPTER.use(TELEMETRY_LOGGER_MIDDLEWARE)
 
