@@ -68,5 +68,5 @@ class FlightBookingTest(aiounittest.AsyncTestCase):
     async def test_flight_booking_none(self):
         adapter = self.setup_booking_dialogs(MainDialog.__name__)
         step1 = await adapter.test("Yo!", "Hello! What can I help you with today?")
-        step2 = await step1.send("lmsqdkjvfl")
+        step2 = await step1.send("I love you!")
         await step2.assert_reply("Sorry, I only book flights. Can you please rephrase your request?")

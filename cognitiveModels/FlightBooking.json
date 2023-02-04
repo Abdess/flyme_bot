@@ -6059,6 +6059,11 @@
       ]
     },
     {
+      "text": "blah blah blah, i have no idea what i'm saying.",
+      "intent": "None",
+      "entities": []
+    },
+    {
       "text": "bonjour! i make ze pastry for a living. i need to travel to ulsan, a buddy of a buddy of an aunt's 3rd husband has ze most extrodinary recipe that i must get.",
       "intent": "BookFlight",
       "entities": [
@@ -7848,6 +7853,31 @@
       ]
     },
     {
+      "text": "can you give me some advice on how to be happy?",
+      "intent": "None",
+      "entities": []
+    },
+    {
+      "text": "can you give me some ideas for dinner tonight?",
+      "intent": "None",
+      "entities": []
+    },
+    {
+      "text": "can you give me some tips on how to be more confident?",
+      "intent": "None",
+      "entities": []
+    },
+    {
+      "text": "can you give me some tips on how to be more organized?",
+      "intent": "None",
+      "entities": []
+    },
+    {
+      "text": "can you give me some tips on how to be more productive?",
+      "intent": "None",
+      "entities": []
+    },
+    {
       "text": "can you help me book a trip to mexico city? we'll be 4 adults and 6 kids from long baech.",
       "intent": "BookFlight",
       "entities": [
@@ -8010,6 +8040,11 @@
       ]
     },
     {
+      "text": "can you recommend a good restaurant to eat at?",
+      "intent": "None",
+      "entities": []
+    },
+    {
       "text": "can you send me out of sapporo",
       "intent": "BookFlight",
       "entities": [
@@ -8054,6 +8089,26 @@
     {
       "text": "can you stop sending the message",
       "intent": "Communication.Cancel",
+      "entities": []
+    },
+    {
+      "text": "can you suggest a good book to read?",
+      "intent": "None",
+      "entities": []
+    },
+    {
+      "text": "can you suggest a good workout playlist for me?",
+      "intent": "None",
+      "entities": []
+    },
+    {
+      "text": "can you suggest a good workout routine for me?",
+      "intent": "None",
+      "entities": []
+    },
+    {
+      "text": "can you tell me a joke?",
+      "intent": "None",
       "entities": []
     },
     {
@@ -9708,6 +9763,11 @@
       ]
     },
     {
+      "text": "do you have a favorite color?",
+      "intent": "None",
+      "entities": []
+    },
+    {
       "text": "do you have a flight that departs closer to august 22nd by any chance?",
       "intent": "BookFlight",
       "entities": [
@@ -10152,6 +10212,16 @@
       ]
     },
     {
+      "text": "do you like spicy food or mild food better?",
+      "intent": "None",
+      "entities": []
+    },
+    {
+      "text": "do you like warm weather or cool weather better?",
+      "intent": "None",
+      "entities": []
+    },
+    {
       "text": "do you offer flights from san jose to buenos aires?",
       "intent": "BookFlight",
       "entities": [
@@ -10168,6 +10238,11 @@
           "children": []
         }
       ]
+    },
+    {
+      "text": "do you prefer sunny days or rainy days?",
+      "intent": "None",
+      "entities": []
     },
     {
       "text": "do you think i could still get the message across if we went to san juan?",
@@ -22215,6 +22290,11 @@
       ]
     },
     {
+      "text": "how are you?",
+      "intent": "None",
+      "entities": []
+    },
+    {
       "text": "how are your packages to phoenix?",
       "intent": "BookFlight",
       "entities": [
@@ -22285,6 +22365,11 @@
           "children": []
         }
       ]
+    },
+    {
+      "text": "how do you like your coffee in the morning?",
+      "intent": "None",
+      "entities": []
     },
     {
       "text": "how long is the trip leaving sept 2 to cancun",
@@ -24291,6 +24376,11 @@
       ]
     },
     {
+      "text": "i enjoy hiking and exploring nature.",
+      "intent": "None",
+      "entities": []
+    },
+    {
       "text": "i forgot that there is a fifth adult travelling with our group",
       "intent": "BookFlight",
       "entities": [
@@ -25149,6 +25239,11 @@
       ]
     },
     {
+      "text": "i have a pet elephant named ellie.",
+      "intent": "None",
+      "entities": []
+    },
+    {
       "text": "i have a total of $4200 to go to kingston from seoul. what can you do for me?",
       "intent": "BookFlight",
       "entities": [
@@ -25947,6 +26042,11 @@
       ]
     },
     {
+      "text": "i like to play musical instruments in my free time.",
+      "intent": "None",
+      "entities": []
+    },
+    {
       "text": "i like. how about trips to belo horizonte",
       "intent": "BookFlight",
       "entities": [
@@ -26247,6 +26347,16 @@
       ]
     },
     {
+      "text": "i love to bake and cook in my free time.",
+      "intent": "None",
+      "entities": []
+    },
+    {
+      "text": "i love to dance and have a good time.",
+      "intent": "None",
+      "entities": []
+    },
+    {
       "text": "i love travelling alone without having to worry about any budgets!!",
       "intent": "BookFlight",
       "entities": [
@@ -26257,6 +26367,11 @@
           "children": []
         }
       ]
+    },
+    {
+      "text": "i love you",
+      "intent": "None",
+      "entities": []
     },
     {
       "text": "i managed to be off work from august 27th to september 7th and i'm hoping to be away for the whole time. yes, i'll be alone",
@@ -27930,6 +28045,16 @@
           "children": []
         }
       ]
+    },
+    {
+      "text": "i really enjoy listening to music.",
+      "intent": "None",
+      "entities": []
+    },
+    {
+      "text": "i really love ice cream!",
+      "intent": "None",
+      "entities": []
     },
     {
       "text": "i really need about 7 days to work.. how about if we went to hamburg instead?",
@@ -31918,6 +32043,16 @@
           "children": []
         }
       ]
+    },
+    {
+      "text": "i'm feeling happy and carefree today!",
+      "intent": "None",
+      "entities": []
+    },
+    {
+      "text": "i'm feeling tired and lazy today.",
+      "intent": "None",
+      "entities": []
     },
     {
       "text": "i'm free to travel from august 30 to september 20. budget is to be determined",
@@ -46211,6 +46346,11 @@
       "entities": []
     },
     {
+      "text": "random words and phrases that don't make sense.",
+      "intent": "None",
+      "entities": []
+    },
+    {
       "text": "rats - no good! check out salvador instead",
       "intent": "BookFlight",
       "entities": [
@@ -49869,6 +50009,11 @@
           "children": []
         }
       ]
+    },
+    {
+      "text": "the sky is blue and the grass is green.",
+      "intent": "None",
+      "entities": []
     },
     {
       "text": "the soon to be mrs. will be attending as well",
@@ -55595,6 +55740,11 @@
       ]
     },
     {
+      "text": "what do you think about the latest trend in fashion?",
+      "intent": "None",
+      "entities": []
+    },
+    {
       "text": "what good is money if i can't spend it??? i have 5600 saved up, can't actually travel, but want to see where i could go if maybe things were different and i had time off work. like for example would i be able to go from ulsan to washington?",
       "intent": "BookFlight",
       "entities": [
@@ -56499,6 +56649,41 @@
           "children": []
         }
       ]
+    },
+    {
+      "text": "what's the weather like today?",
+      "intent": "None",
+      "entities": []
+    },
+    {
+      "text": "what's your favorite hobby?",
+      "intent": "None",
+      "entities": []
+    },
+    {
+      "text": "what's your favorite type of animal?",
+      "intent": "None",
+      "entities": []
+    },
+    {
+      "text": "what's your favorite type of art?",
+      "intent": "None",
+      "entities": []
+    },
+    {
+      "text": "what's your favorite type of music?",
+      "intent": "None",
+      "entities": []
+    },
+    {
+      "text": "what's your favorite type of tv show?",
+      "intent": "None",
+      "entities": []
+    },
+    {
+      "text": "what's your opinion on pineapple on pizza?",
+      "intent": "None",
+      "entities": []
     },
     {
       "text": "what’s available in ulsan?",
@@ -59796,5 +59981,10 @@
       "intent": "Communication.Cancel"
     }
   ],
-  "settings": []
+  "settings": [
+    {
+      "name": "NormalizePunctuation",
+      "value": "true"
+    }
+  ]
 }
