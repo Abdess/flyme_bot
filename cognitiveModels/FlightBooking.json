@@ -522,6 +522,18 @@
       ]
     },
     {
+      "text": "1 dinar",
+      "intent": "BookFlight",
+      "entities": [
+        {
+          "entity": "budget",
+          "startPos": 0,
+          "endPos": 6,
+          "children": []
+        }
+      ]
+    },
+    {
       "text": "1 kid",
       "intent": "BookFlight",
       "entities": [
@@ -610,6 +622,11 @@
           "children": []
         }
       ]
+    },
+    {
+      "text": "10 euros",
+      "intent": "BookFlight",
+      "entities": []
     },
     {
       "text": "10 sounds good as long as i am back by the 15th",
@@ -8402,6 +8419,11 @@
       ]
     },
     {
+      "text": "carthage",
+      "intent": "BookFlight",
+      "entities": []
+    },
+    {
       "text": "check belem",
       "intent": "BookFlight",
       "entities": [
@@ -14026,6 +14048,11 @@
           "children": []
         }
       ]
+    },
+    {
+      "text": "hello, have you a cat at home?",
+      "intent": "None",
+      "entities": []
     },
     {
       "text": "hello, i am looking to book a trip for 2 adults and 6 children for $21,300 or less. we are departing from kochi for denver.",
@@ -26173,6 +26200,78 @@
       ]
     },
     {
+      "text": "i live in le havre and i want to go to paris today and return 2 days later for 400 euro, 2 adults and 2 children.",
+      "intent": "BookFlight",
+      "entities": [
+        {
+          "entity": "or_city",
+          "startPos": 10,
+          "endPos": 17,
+          "children": []
+        },
+        {
+          "entity": "dst_city",
+          "startPos": 39,
+          "endPos": 43,
+          "children": []
+        },
+        {
+          "entity": "budget",
+          "startPos": 79,
+          "endPos": 81,
+          "children": []
+        },
+        {
+          "entity": "n_adults",
+          "startPos": 89,
+          "endPos": 89,
+          "children": []
+        },
+        {
+          "entity": "n_children",
+          "startPos": 102,
+          "endPos": 102,
+          "children": []
+        }
+      ]
+    },
+    {
+      "text": "i live in le havre and i want to go to paris today and return 2 days later for 400€, 2 adults and 2 children.’",
+      "intent": "BookFlight",
+      "entities": [
+        {
+          "entity": "or_city",
+          "startPos": 10,
+          "endPos": 17,
+          "children": []
+        },
+        {
+          "entity": "dst_city",
+          "startPos": 39,
+          "endPos": 43,
+          "children": []
+        },
+        {
+          "entity": "budget",
+          "startPos": 79,
+          "endPos": 82,
+          "children": []
+        },
+        {
+          "entity": "n_adults",
+          "startPos": 85,
+          "endPos": 85,
+          "children": []
+        },
+        {
+          "entity": "n_children",
+          "startPos": 98,
+          "endPos": 98,
+          "children": []
+        }
+      ]
+    },
+    {
       "text": "i live in lima. where can i go for 2600",
       "intent": "BookFlight",
       "entities": [
@@ -26345,6 +26444,11 @@
           "children": []
         }
       ]
+    },
+    {
+      "text": "i love eating pizza",
+      "intent": "None",
+      "entities": []
     },
     {
       "text": "i love to bake and cook in my free time.",
@@ -26722,6 +26826,11 @@
       ]
     },
     {
+      "text": "i need directions to the nearest gas station",
+      "intent": "None",
+      "entities": []
+    },
+    {
       "text": "i need free parking as ill be renting a car. but three stars is not going to attract my target demographic. if i throw another thousand dollars on my budget can you find me something better?",
       "intent": "BookFlight",
       "entities": [
@@ -26983,6 +27092,11 @@
           "children": []
         }
       ]
+    },
+    {
+      "text": "i need to find an atm",
+      "intent": "None",
+      "entities": []
     },
     {
       "text": "i need to find something for under $14800",
@@ -27643,6 +27757,11 @@
           "children": []
         }
       ]
+    },
+    {
+      "text": "i need to rent a car",
+      "intent": "None",
+      "entities": []
     },
     {
       "text": "i need to schmooze a few fellas who are high stake investors with my company. so we're gonna take em a little business trip to vancouver leaving from sydney they're big spenders so the budget is of no consequence",
@@ -29448,6 +29567,11 @@
       ]
     },
     {
+      "text": "i want to know the exchange rate",
+      "intent": "None",
+      "entities": []
+    },
+    {
       "text": "i want to leave from jerusalem. rome i want to go with a dozen people",
       "intent": "BookFlight",
       "entities": [
@@ -29572,6 +29696,16 @@
           "children": []
         }
       ]
+    },
+    {
+      "text": "i want to make a reservation at a restaurant",
+      "intent": "None",
+      "entities": []
+    },
+    {
+      "text": "i want to schedule a meeting",
+      "intent": "None",
+      "entities": []
     },
     {
       "text": "i want to see how much it would cost to go to miami",
@@ -32050,6 +32184,11 @@
       "entities": []
     },
     {
+      "text": "i'm feeling tired",
+      "intent": "None",
+      "entities": []
+    },
+    {
       "text": "i'm feeling tired and lazy today.",
       "intent": "None",
       "entities": []
@@ -32095,6 +32234,41 @@
           "children": []
         }
       ]
+    },
+    {
+      "text": "i'm going to listen to music",
+      "intent": "None",
+      "entities": []
+    },
+    {
+      "text": "i'm going to play video games",
+      "intent": "None",
+      "entities": []
+    },
+    {
+      "text": "i'm going to read a book",
+      "intent": "None",
+      "entities": []
+    },
+    {
+      "text": "i'm going to the beach",
+      "intent": "None",
+      "entities": []
+    },
+    {
+      "text": "i'm going to the gym",
+      "intent": "None",
+      "entities": []
+    },
+    {
+      "text": "i'm going to visit my grandparents",
+      "intent": "None",
+      "entities": []
+    },
+    {
+      "text": "i'm going to watch a movie",
+      "intent": "None",
+      "entities": []
     },
     {
       "text": "i'm gona be rich i want to go to north vancouver",
@@ -32421,6 +32595,16 @@
       ]
     },
     {
+      "text": "i'm looking for a hotel",
+      "intent": "None",
+      "entities": []
+    },
+    {
+      "text": "i'm looking for a parking spot",
+      "intent": "None",
+      "entities": []
+    },
+    {
       "text": "i'm looking for a trip between september 1 and 11",
       "intent": "BookFlight",
       "entities": [
@@ -32731,6 +32915,11 @@
           "children": []
         }
       ]
+    },
+    {
+      "text": "i'm not sure what to wear today",
+      "intent": "None",
+      "entities": []
     },
     {
       "text": "i'm not sure, how bout look for something that costs more than $2000",
@@ -36999,6 +37188,24 @@
       ]
     },
     {
+      "text": "le havre",
+      "intent": "BookFlight",
+      "entities": [
+        {
+          "entity": "dst_city",
+          "startPos": 0,
+          "endPos": 7,
+          "children": []
+        },
+        {
+          "entity": "or_city",
+          "startPos": 3,
+          "endPos": 7,
+          "children": []
+        }
+      ]
+    },
+    {
       "text": "leave asap, return before september 2",
       "intent": "BookFlight",
       "entities": [
@@ -38119,6 +38326,11 @@
           "children": []
         }
       ]
+    },
+    {
+      "text": "make me a coffee",
+      "intent": "None",
+      "entities": []
     },
     {
       "text": "man how about 5000. lets meet in the middle here",
