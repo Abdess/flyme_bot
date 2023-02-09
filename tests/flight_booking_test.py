@@ -58,12 +58,12 @@ class FlightBookingTest(aiounittest.AsyncTestCase):
     async def test_flight_booking_sentence(self):
         adapter = self.setup_booking_dialogs(MainDialog.__name__)
         step1 = await adapter.test("Hey!", "Hello! What can I help you with today?")
-        step2 = await step1.send("I want to go to Paris from Le Havre for the 10th February 2023 and return the "
-                                 "2023-02-15. For 100€, 1 adult and 2 children.")
-        await step2.assert_reply("I understand that you're planning to travel to Paris, leaving from Le Havre on "
-                                 "2023-02-10 and returning on 2023-02-15. You'll be traveling with 1 adult(s) and 2 "
-                                 "child(ren), and your budget is set at 100 Euro. Can you please confirm that this "
-                                 "information is correct? (1) Yes or (2) No")
+        step2 = await step1.send("I want to go to Paris from Le Havre for the 10th February 2023 and return the 15th"
+                                 " February 2023. For 100€, 1 adult and 2 children.")
+        await step2.assert_reply("I understand that you're planning to travel to Paris, leaving from Le Havre on"
+                                 " 2023-02-10 and returning on 2023-02-15. You'll be traveling with 1 adult(s) and 2"
+                                 " child(ren), and your budget is set at 100 Euro. Can you please confirm that this"
+                                 " information is correct? (1) Yes or (2) No")
 
     async def test_flight_booking_none(self):
         adapter = self.setup_booking_dialogs(MainDialog.__name__)
